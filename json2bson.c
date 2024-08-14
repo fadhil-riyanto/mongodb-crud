@@ -1,8 +1,10 @@
 #include "include/json2bson.h"
 #include "bson/bson.h"
+#include "mongoc/mongoc.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -48,8 +50,28 @@ static char* intepret_bson(bson_t *obj)
         return string;
 }
 
+static mongoc_collection_t* db_create_ctx(mongoc_client_t *client)
+{
+        mongoc_collection_t *collection;
+
+        
+        return mongoc_client_get_collection(client, "test-db", "collection");
+}
+
+static void db_destroy_ctx(mongoc_collection_t *collection, mongoc_client_t *client)
+{
+        mongoc_collection_destroy(collection);
+        mongoc_client_destroy(client);
+        
+}
+
 int main(void)
 {
+        int ret;
+        bson_error_t error;
+        mongoc_init();
+        mongoc_client_t* client = mongoc_client_new("mongodb://localhost:27017");
+        mongoc_collection_t *cur_coll = db_create_ctx(client);
         int fd = open("../test.json", O_RDONLY);
         if (fd < 0)
                 perror("open");
@@ -61,8 +83,17 @@ int main(void)
         bson_t *res = start_convert(rawtext);
         free(intepret_bson(res));
 
+        ret = mongoc_collection_insert_one(cur_coll, res, NULL, NULL, &error);
+        if (!ret) {
+                printf("error insert %s\n", error.message);
+        }
+
+
         // printf("%s", rawtext);
         free(rawtext);
         close(fd);
+
+        db_destroy_ctx(cur_coll, client);
+        mongoc_cleanup();
         return 0;
 }
