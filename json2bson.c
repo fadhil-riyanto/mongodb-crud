@@ -1,4 +1,5 @@
 #include "include/json2bson.h"
+#include "bson/bson.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -29,6 +30,24 @@ static char* create_heap_str(int fd, size_t size)
         return rawtext;
 }
 
+static bson_t* start_convert(const char *json)
+{
+        bson_error_t error;
+        bson_t *bson = bson_new_from_json((const uint8_t*)json, -1, &error);
+
+        if (!bson) {
+                printf("err: %s\n", error.message);
+        }
+        return bson;
+}
+
+static char* intepret_bson(bson_t *obj)
+{
+        char* string = bson_as_canonical_extended_json (obj, NULL);
+        printf("%s\n", string);
+        return string;
+}
+
 int main(void)
 {
         int fd = open("../test.json", O_RDONLY);
@@ -39,9 +58,11 @@ int main(void)
 
         char* rawtext = create_heap_str(fd, fz);
 
-        printf("%s", rawtext);
-        free(rawtext);
+        bson_t *res = start_convert(rawtext);
+        free(intepret_bson(res));
 
+        // printf("%s", rawtext);
+        free(rawtext);
         close(fd);
         return 0;
 }
