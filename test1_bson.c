@@ -16,14 +16,20 @@ static inline void struct_init(struct entire_doc *doc)
 
 static void append_date(struct entire_doc *doc, int year, int mon, int day)
 {
-        doc->user_details->tm_year = year;
-        doc->user_details->tm_mon = mon;
-        doc->user_details->tm_mday = day;
+        // doc->user_details->tm_year = year;
+        // doc->user_details->tm_mon = mon;
+        // doc->user_details->tm_mday = day;
+        struct tm date = {0};
+
+        date.tm_year = year;
+        date.tm_mon = mon;
+        date.tm_mday = day;
+
         
         bson_append_date_time(doc->document, 
                                 "born", 
                                 -1, 
-                                mktime(doc->user_details) * 1000
+                                mktime(&date) * 1000
         );
 }
 
@@ -46,6 +52,8 @@ int main(void)
         struct_init(&doc);
 
         append_date(&doc, 2020, 31, 1);
+        append_date(&doc, 2010, 31, 1);
+        
         intepret_bson(doc.document);
         struct_free(&doc);
 
