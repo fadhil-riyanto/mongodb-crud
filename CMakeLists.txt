@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(mongodb_crud_c VERSION 1.0)
 
-set(SOURCE_FILES server_ping.c test1_bson.c)
+set(SOURCE_FILES server_ping.c test1_bson.c json2bson.c)
 
 foreach(SOURCE_PATH ${SOURCE_FILES})
         get_filename_component(EXECUTABLE_NAME ${SOURCE_PATH} NAME_WE)
