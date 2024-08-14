@@ -1,4 +1,5 @@
 {
         "foo": "bar",
-        "foobar": "barfoo"
+        "foobar": "barfoo",
+        "random": "int?"
 }
