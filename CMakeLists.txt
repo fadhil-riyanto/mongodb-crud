@@ -13,3 +13,10 @@ foreach(SOURCE_PATH ${SOURCE_FILES})
         target_include_directories(${EXECUTABLE_NAME} PRIVATE /usr/include/libmongoc-1.0/)
         target_include_directories(${EXECUTABLE_NAME} PRIVATE /usr/include/libbson-1.0/)
 endforeach(SOURCE_PATH ${SOURCE_FILES})
+
+add_executable(test_query conn.c test_query.c)
+target_link_libraries(test_query -lmongoc-1.0)
+target_link_libraries(test_query -lbson-1.0)
+target_include_directories(test_query PRIVATE /usr/include/libmongoc-1.0/)
+target_include_directories(test_query PRIVATE /usr/include/libbson-1.0/)
+
