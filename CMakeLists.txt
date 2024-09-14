@@ -20,3 +20,6 @@ target_link_libraries(test_query -lbson-1.0)
 target_include_directories(test_query PRIVATE /usr/include/libmongoc-1.0/)
 target_include_directories(test_query PRIVATE /usr/include/libbson-1.0/)
 
+add_executable(test_bson bson/test_01.c)
+target_link_libraries(test_bson -lbson-1.0)
+target_include_directories(test_bson PRIVATE /usr/include/libbson-1.0/)
